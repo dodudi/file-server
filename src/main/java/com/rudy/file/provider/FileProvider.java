@@ -25,6 +25,12 @@ public class FileProvider {
     @Value("${file.path.document}")
     private String documentPath;
 
+    @Value("${file.path.script}")
+    private String scriptPath;
+
+    @Value("${file.path.lib}")
+    private String libPath;
+
     public Path getPath(FileType fileType) {
         if (fileType == null) {
             throw new IllegalArgumentException("FileType cannot be null");
@@ -35,6 +41,8 @@ public class FileProvider {
             case AUDIO -> audioPath;
             case VIDEO -> videoPath;
             case DOC, DOCX -> documentPath;
+            case SCRIPT -> scriptPath;
+            case LIB -> libPath;
         };
 
         return Path.of(rootPath, subPath);
@@ -48,6 +56,7 @@ public class FileProvider {
             case "mp3", "wav", "aac", "ogg", "flac" -> FileType.AUDIO;
             case "mp4", "mkv", "avi", "mov", "wmv" -> FileType.VIDEO;
             case "pdf", "doc", "docx", "xls", "xlsx", "ppt", "pptx", "txt", "md" -> FileType.DOC;
+            case "pyd" -> FileType.LIB;
             default -> throw new IllegalArgumentException("Unsupported file type: " + extension);
         };
     }

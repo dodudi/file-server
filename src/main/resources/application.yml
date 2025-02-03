@@ -30,4 +30,6 @@ file:
     image: "images"
     audio: "audios"
     video: "videos"
-    document: "document"
+    document: "documents"
+    script: "scripts"
+    lib: "libs"

@@ -1,16 +1,17 @@
 package com.rudy.file.service;
 
+import com.rudy.file.domain.FileInfo;
 import com.rudy.file.domain.FileType;
 import com.rudy.file.provider.FileProvider;
 import com.rudy.file.repository.FileRepository;
-import com.rudy.file.request.FileRequest;
 import com.rudy.file.response.FileResponse;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,8 +52,11 @@ public class SimpleFileService {
                     Path filePath = uploadPath.resolve(fileName);
                     Files.write(filePath, file.getBytes());
 
-                    LocalDateTime localDateTime = LocalDateTime.now();
-                    FileResponse response = new FileResponse(fileName, fileType.toString(), filePath.toString(), localDateTime, localDateTime);
+                    FileInfo fileInfo = new FileInfo(fileName, fileType.toString(), filePath.toString());
+                    fileInfo = fileRepository.save(fileInfo);
+                    log.debug("save file info - {}", fileInfo);
+
+                    FileResponse response = new FileResponse(fileInfo);
                     uploadedFiles.add(response);
                 }
             }
@@ -63,46 +67,9 @@ public class SimpleFileService {
         return uploadedFiles;
     }
 
-    public void downloadFile(String fileName, HttpServletResponse response) {
-        try {
-            Path filePath = Paths.get("uploads/").resolve(fileName).normalize();
-            Resource resource = new UrlResource(filePath.toUri());
-
-            if (!resource.exists()) {
-                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-                response.getWriter().write("File not found: " + fileName);
-                return;
-            }
-
-            String mimeType = Files.probeContentType(filePath);
-            if (mimeType == null) {
-                mimeType = "application/octet-stream";
-            }
-
-            // 응답 헤더 설정
-            response.setContentType(mimeType);
-            response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"");
-            response.setHeader(HttpHeaders.CONTENT_LENGTH, String.valueOf(resource.contentLength()));
-
-            // 파일 데이터 전송
-            Files.copy(filePath, response.getOutputStream());
-            response.getOutputStream().flush();
-        } catch (MalformedURLException e) {
-            log.error("simple download malformed url error", e);
-            try {
-                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                response.getWriter().write("Invalid file path: " + fileName);
-            } catch (IOException ioException) {
-                log.error("simple download malformed url error", e);
-            }
-        } catch (IOException e) {
-            log.error("simple download io error", e);
-            try {
-                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                response.getWriter().write("Error reading file: " + fileName);
-            } catch (IOException ioException) {
-                ioException.printStackTrace();
-            }
-        }
+    public List<FileResponse> getFiles(Pageable pageable) {
+        Page<FileInfo> pageInfos = fileRepository.findAll(pageable);
+        List<FileInfo> items = pageInfos.getContent();
+        return items.stream().map(FileResponse::new).toList();
     }
 }

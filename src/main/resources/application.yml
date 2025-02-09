@@ -24,6 +24,10 @@ spring:
       max-file-size: 10MB
       max-request-size: 50MB
 
+logging:
+  level:
+    com.rudy.file.service.SimpleFileService: debug
+
 file:
   path:
     root: "upload"

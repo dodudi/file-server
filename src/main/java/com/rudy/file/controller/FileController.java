@@ -27,4 +27,10 @@ public class FileController {
     public ResponseEntity<List<FileResponse>> getFiles(Pageable pageable) {
         return ResponseEntity.ok(fileService.getFiles(pageable));
     }
+
+    @DeleteMapping
+    public ResponseEntity<FileResponse> delete(@RequestParam("id") Long id) {
+        fileService.deleteFile(id);
+        return ResponseEntity.ok().build();
+    }
 }

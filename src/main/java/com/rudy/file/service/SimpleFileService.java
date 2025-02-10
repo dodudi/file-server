@@ -5,24 +5,17 @@ import com.rudy.file.domain.FileType;
 import com.rudy.file.provider.FileProvider;
 import com.rudy.file.repository.FileRepository;
 import com.rudy.file.response.FileResponse;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,14 +47,14 @@ public class SimpleFileService {
 
                     FileInfo fileInfo = new FileInfo(fileName, fileType.toString(), filePath.toString());
                     fileInfo = fileRepository.save(fileInfo);
-                    log.debug("save file info - {}", fileInfo);
+                    log.debug("file upload info - {}", fileInfo);
 
                     FileResponse response = new FileResponse(fileInfo);
                     uploadedFiles.add(response);
                 }
             }
         } catch (IOException e) {
-            log.error("File upload error", e);
+            log.error("file upload error", e);
         }
 
         return uploadedFiles;
@@ -71,5 +64,18 @@ public class SimpleFileService {
         Page<FileInfo> pageInfos = fileRepository.findAll(pageable);
         List<FileInfo> items = pageInfos.getContent();
         return items.stream().map(FileResponse::new).toList();
+    }
+
+    public void deleteFile(Long id) {
+        fileRepository.findById(id).ifPresent(f -> {
+            Path fileFullPath = Path.of(f.getFilePath());
+
+            try {
+                Files.deleteIfExists(fileFullPath);
+                fileRepository.delete(f);
+            } catch (Exception e) {
+                log.error("", e);
+            }
+        });
     }
 }

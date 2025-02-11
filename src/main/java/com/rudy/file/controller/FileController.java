@@ -2,6 +2,7 @@ package com.rudy.file.controller;
 
 import com.rudy.file.response.FileResponse;
 import com.rudy.file.service.SimpleFileService;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +22,12 @@ public class FileController {
             @RequestPart(value = "files") MultipartFile[] files
     ) {
         return ResponseEntity.ok(fileService.uploadFiles(files));
+    }
+
+    @GetMapping("/download")
+    public ResponseEntity<FileResponse> download(@RequestParam Long fileId, HttpServletResponse response) {
+        FileResponse fileResponse = fileService.downloadFile(fileId, response);
+        return ResponseEntity.ok(fileResponse);
     }
 
     @GetMapping

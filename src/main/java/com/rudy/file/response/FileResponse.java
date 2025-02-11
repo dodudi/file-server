@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 
 @Getter
 public class FileResponse {
+    private final long id;
     private final String fileName;
     private final String fileType;
     private final String filePath;
@@ -14,6 +15,7 @@ public class FileResponse {
     private final LocalDateTime updateDateTime;
 
     public FileResponse(FileInfo fileInfo) {
+        this.id = fileInfo.getId();
         this.fileName = fileInfo.getFileName();
         this.fileType = fileInfo.getFileType();
         this.filePath = fileInfo.getFilePath();
@@ -21,7 +23,8 @@ public class FileResponse {
         this.updateDateTime = fileInfo.getUpdateDateTime();
     }
 
-    public FileResponse(String fileName, String fileType, String filePath, LocalDateTime createDateTime, LocalDateTime updateDateTime) {
+    public FileResponse(long id, String fileName, String fileType, String filePath, LocalDateTime createDateTime, LocalDateTime updateDateTime) {
+        this.id = id;
         this.fileName = fileName;
         this.fileType = fileType;
         this.filePath = filePath;

@@ -5,15 +5,22 @@ import com.rudy.file.domain.FileType;
 import com.rudy.file.provider.FileProvider;
 import com.rudy.file.repository.FileRepository;
 import com.rudy.file.response.FileResponse;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -58,6 +65,38 @@ public class SimpleFileService {
         }
 
         return uploadedFiles;
+    }
+
+    public FileResponse downloadFile(Long fileId, HttpServletResponse response) {
+        FileInfo fileInfo = fileRepository.findById(fileId).orElseThrow(() -> new RuntimeException("file not found"));
+        String filePath = fileInfo.getFilePath();
+        File targetFile = new File(filePath);
+
+        if (!targetFile.exists()) {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return new FileResponse(fileInfo);
+        }
+
+//        Resource resource = new FileSystemResource(targetFile);
+        response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
+        response.setHeader("Content-Disposition", "attachment; filename=\"" + targetFile.getName() + "\"");
+
+        try (FileInputStream fis = new FileInputStream(targetFile);
+             OutputStream os = response.getOutputStream()) {
+
+            byte[] buffer = new byte[1024];
+            int bytesRead;
+
+            while ((bytesRead = fis.read(buffer)) != -1) {
+                os.write(buffer, 0, bytesRead);
+            }
+            os.flush();
+
+        } catch (IOException e) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        }
+
+        return new FileResponse(fileInfo);
     }
 
     public List<FileResponse> getFiles(Pageable pageable) {

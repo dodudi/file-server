@@ -38,3 +38,4 @@ out/
 
 ### CUSTOM ###
 /upload/
+/docker/*.jar

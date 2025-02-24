@@ -20,3 +20,6 @@ spring:
 logging:
   level:
     com.rudy.file.service.SimpleFileService: debug
+
+url:
+  auth-server: ${AUTH_SERVER}

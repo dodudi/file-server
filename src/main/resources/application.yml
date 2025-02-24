@@ -1,7 +1,6 @@
 spring:
   application:
     name: file-server
-
 file:
   path:
     root: "upload"
@@ -11,3 +10,5 @@ file:
     document: "documents"
     script: "scripts"
     lib: "libs"
+server:
+  port: 8081

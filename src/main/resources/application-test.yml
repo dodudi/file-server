@@ -27,3 +27,6 @@ spring:
 logging:
   level:
     com.rudy.file.service.SimpleFileService: debug
+
+url:
+  auth-server: http://localhost:8080/jwt/validate

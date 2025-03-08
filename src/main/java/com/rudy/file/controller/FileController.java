@@ -2,8 +2,17 @@ package com.rudy.file.controller;
 
 import com.rudy.file.response.FileResponse;
 import com.rudy.file.service.SimpleFileService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Encoding;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
+import org.springdoc.core.converters.models.PageableAsQueryParam;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,9 +26,10 @@ import java.util.List;
 public class FileController {
     private final SimpleFileService fileService;
 
+    @Operation(summary = "Multiple File Upload", description = "여러 개의 파일을 업로드합니다.")
     @PostMapping("/upload")
     public ResponseEntity<List<FileResponse>> upload(
-            @RequestPart(value = "files") MultipartFile[] files
+            @io.swagger.v3.oas.annotations.parameters.RequestBody @RequestParam @RequestPart(value = "files") MultipartFile[] files
     ) {
         return ResponseEntity.ok(fileService.uploadFiles(files));
     }
@@ -31,7 +41,7 @@ public class FileController {
     }
 
     @GetMapping
-    public ResponseEntity<List<FileResponse>> getFiles(Pageable pageable) {
+    public ResponseEntity<List<FileResponse>> getFiles(@ParameterObject Pageable pageable) {
         return ResponseEntity.ok(fileService.getFiles(pageable));
     }
 

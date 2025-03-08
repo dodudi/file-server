@@ -8,6 +8,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.HandlerInterceptor;
 
+import javax.security.sasl.AuthenticationException;
+
 @Component
 public class JwtInterceptor implements HandlerInterceptor {
     private final RestTemplate restTemplate = new RestTemplate();
@@ -17,10 +19,12 @@ public class JwtInterceptor implements HandlerInterceptor {
 
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String authHeader = request.getHeader("Authorization");
-        try {
-            JwtResponse jwtResponse = restTemplate.getForObject(authServerUrl + "?token=" + authHeader, JwtResponse.class);
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            authHeader = authHeader.replace("Bearer ", "");
 
+            JwtResponse jwtResponse = restTemplate.getForObject(authServerUrl + "?token=" + authHeader, JwtResponse.class);
             assert jwtResponse != null;
+
             if (jwtResponse.getIsValidated()) {
                 return true;
             } else {
@@ -28,10 +32,10 @@ public class JwtInterceptor implements HandlerInterceptor {
                 response.getWriter().write("Invalid Token");
                 return false;
             }
-        } catch (Exception e) {
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            response.getWriter().write("API Error");
-            return false;
         }
+
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.getWriter().write("Invalid Token");
+        return false;
     }
 }

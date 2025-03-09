@@ -4,12 +4,11 @@ import com.rudy.file.domain.FileInfo;
 import com.rudy.file.domain.FileType;
 import com.rudy.file.provider.FileProvider;
 import com.rudy.file.repository.FileRepository;
+import com.rudy.file.request.FileHistoryRequest;
 import com.rudy.file.response.FileResponse;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
@@ -33,6 +32,8 @@ import java.util.List;
 public class SimpleFileService {
     private final FileProvider fileProvider;
     private final FileRepository fileRepository;
+
+    private final FileHistoryService fileHistoryService;
 
     public List<FileResponse> uploadFiles(MultipartFile[] files) {
         List<FileResponse> uploadedFiles = new ArrayList<>();
@@ -58,6 +59,9 @@ public class SimpleFileService {
 
                     FileResponse response = new FileResponse(fileInfo);
                     uploadedFiles.add(response);
+
+                    FileHistoryRequest fileHistoryRequest = new FileHistoryRequest("", response.getFileName(), response.getFilePath(), FileType.valueOf(response.getFileType()), "");
+                    fileHistoryService.addUploadHistory(fileHistoryRequest);
                 }
             }
         } catch (IOException e) {
@@ -81,8 +85,7 @@ public class SimpleFileService {
         response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
         response.setHeader("Content-Disposition", "attachment; filename=\"" + targetFile.getName() + "\"");
 
-        try (FileInputStream fis = new FileInputStream(targetFile);
-             OutputStream os = response.getOutputStream()) {
+        try (FileInputStream fis = new FileInputStream(targetFile); OutputStream os = response.getOutputStream()) {
 
             byte[] buffer = new byte[1024];
             int bytesRead;

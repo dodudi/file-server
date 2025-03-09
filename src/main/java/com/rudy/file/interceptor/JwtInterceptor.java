@@ -8,8 +8,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.HandlerInterceptor;
 
-import javax.security.sasl.AuthenticationException;
-
 @Component
 public class JwtInterceptor implements HandlerInterceptor {
     private final RestTemplate restTemplate = new RestTemplate();
@@ -27,10 +25,6 @@ public class JwtInterceptor implements HandlerInterceptor {
 
             if (jwtResponse.getIsValidated()) {
                 return true;
-            } else {
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                response.getWriter().write("Invalid Token");
-                return false;
             }
         }
 

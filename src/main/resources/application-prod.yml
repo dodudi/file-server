@@ -19,7 +19,7 @@ spring:
 
 logging:
   level:
-    com.rudy.file.service.SimpleFileService: debug
+    com.rudy.file.service.com.rudy.file.service.SimpleUploadService: debug
 
 url:
   auth-server: ${AUTH_SERVER}

@@ -6,14 +6,14 @@ import lombok.Getter;
 
 @Getter
 public class FileHistoryResponse {
-    private final String username;
+    private final Long id;
     private final String fileName;
     private final String filePath;
     private final FileType fileType;
-    private final String fileSize;
+    private final Long fileSize;
 
     public FileHistoryResponse(FileHistory fileHistory) {
-        this.username = fileHistory.getUsername();
+        this.id = fileHistory.getId();
         this.fileName = fileHistory.getFileName();
         this.filePath = fileHistory.getFilePath();
         this.fileType = fileHistory.getFileType();

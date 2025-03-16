@@ -4,38 +4,27 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@EntityListeners(AuditingEntityListener.class)
-@ToString
-public class FileInfo {
+public class FileInfo extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private String fileOriginalName;
+    private String fileHashName;
+    private String fileFullPath;
+    private Long fileSize;
 
-    private String fileName;
-    private String fileType;
-    private String filePath;
+    @Enumerated(EnumType.STRING)
+    private FileType fileType;
 
-    @Column(updatable = false)
-    @CreatedDate
-    private LocalDateTime createDateTime;
-
-    @Column(updatable = true)
-    @LastModifiedDate
-    private LocalDateTime updateDateTime;
-
-    public FileInfo(String fileName, String fileType, String filePath) {
-        this.fileName = fileName;
+    public FileInfo(String fileOriginalName, String fileHashName, FileType fileType, String fileFullPath, Long fileSize) {
+        this.fileOriginalName = fileOriginalName;
+        this.fileHashName = fileHashName;
         this.fileType = fileType;
-        this.filePath = filePath;
+        this.fileFullPath = fileFullPath;
+        this.fileSize = fileSize;
     }
 }

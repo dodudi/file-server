@@ -9,9 +9,9 @@ public class FileHistoryRequest {
     private final String fileName;
     private final String filePath;
     private final FileType fileType;
-    private final String fileSize;
+    private final Long fileSize;
 
-    public FileHistoryRequest(String username, String fileName, String filePath, FileType fileType, String fileSize) {
+    public FileHistoryRequest(String username, String fileName, String filePath, FileType fileType, Long fileSize) {
         this.username = username;
         this.fileName = fileName;
         this.filePath = filePath;

@@ -1,0 +1,35 @@
+spring:
+  application:
+    name: file-server
+  datasource:
+    url: jdbc:h2:mem:test
+    driverClassName: org.h2.Driver
+    username: sa
+    password: password
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    open-in-view: false
+    show-sql: true
+    generate-ddl: true
+    hibernate:
+      ddl-auto: create-drop
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+      max-request-size: 50MB
+
+logging:
+  level:
+    com.rudy.file.service.com.rudy.file.service.SimpleUploadService: debug
+
+url:
+  auth-server: http://localhost:8080/jwt/validate
+
+server:
+  port: 8081

@@ -11,6 +11,11 @@ spring:
     show-sql: true
     hibernate:
       ddl-auto: none
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:sql/schema.sql
+      data-locations: classpath:sql/data.sql
   servlet:
     multipart:
       enabled: true

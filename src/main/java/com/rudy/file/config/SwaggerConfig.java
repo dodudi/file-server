@@ -5,13 +5,15 @@ import io.swagger.v3.oas.models.PathItem;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
+import io.swagger.v3.oas.models.servers.Server;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.List;
 
 @Configuration
 public class SwaggerConfig {
 
-    private static final String SWAGGER_URL = "/v2/api-docs";
     private static final String SWAGGER_TITLE = "File Server API";
     private static final String SWAGGER_VERSION = "1.0";
     private static final String SWAGGER_DESCRIPTION = "File Server API";
@@ -20,7 +22,8 @@ public class SwaggerConfig {
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
                 .info(getDescription())
-                .addSecurityItem(new SecurityRequirement().addList("bearerAuth")) // 모든 API에 적용
+                .servers(List.of(new Server().url("/api/file"), new Server().url("/")))
+                .addSecurityItem(new SecurityRequirement().addList("bearerAuth"))
                 .components(new io.swagger.v3.oas.models.Components()
                         .addSecuritySchemes("bearerAuth", new SecurityScheme()
                                 .type(SecurityScheme.Type.HTTP)

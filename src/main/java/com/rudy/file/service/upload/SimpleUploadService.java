@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -37,6 +38,13 @@ public class SimpleUploadService implements UploadService {
         fileInfo = fileInfoRepository.save(fileInfo);
         log.debug("file upload info - {}", fileInfo);
         return new UploadDto(fileInfo);
+    }
+
+    @Override
+    public List<UploadDto> uploads(List<MultipartFile> files) {
+        return files.stream()
+                .map(this::upload)
+                .toList();
     }
 
     private String getOriginalFilename(MultipartFile file) {

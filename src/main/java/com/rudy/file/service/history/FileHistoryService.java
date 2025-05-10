@@ -12,6 +12,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -28,5 +30,12 @@ public class FileHistoryService {
         FileHistory fileHistory = new FileHistory(request);
         fileHistoryRepository.save(fileHistory);
         log.info("upload history success - {}", request.getFileOriginalName());
+    }
+
+    @Transactional
+    public void addHistories(List<UploadDto> uploadDtos) {
+        for (UploadDto uploadDto : uploadDtos) {
+            addHistory(uploadDto);
+        }
     }
 }

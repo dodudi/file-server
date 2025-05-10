@@ -21,6 +21,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/files")
@@ -40,13 +42,25 @@ public class FileController {
 
     @Operation(summary = "File Upload", description = "파일을 업로드합니다.")
     @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<UploadResponse> upload(@Valid @Parameter @RequestPart(value = "files") MultipartFile file) {
+    public ResponseEntity<UploadResponse> upload(@Valid @Parameter @RequestParam MultipartFile file) {
         UploadDto upload = uploadService.upload(file);
         fileHistoryService.addHistory(upload);
 
         UploadResponse uploadResponse = new UploadResponse(upload);
         return ResponseEntity.ok(uploadResponse);
     }
+
+    @Operation(summary = "File Upload", description = "파일을 업로드합니다.")
+    @PostMapping(value = "/uploads", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<List<UploadResponse>> upload(@Valid @Parameter @RequestParam List<MultipartFile> files) {
+        List<UploadDto> uploads = uploadService.uploads(files);
+        fileHistoryService.addHistories(uploads);
+        return ResponseEntity.ok(uploads.stream()
+                .map(UploadResponse::new)
+                .toList()
+        );
+    }
+
 
     @Operation(summary = "File Download", description = "파일을 다운로드 합니다.")
     @GetMapping("/{id}/download")

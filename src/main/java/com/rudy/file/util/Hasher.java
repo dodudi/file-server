@@ -7,18 +7,18 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 @Component
-public class FileNameHasher {
-    public String hashFileName(String originalFileName) {
+public class Hasher {
+    public String convertHash(String content) {
         try {
             String extension = "";
-            int dotIndex = originalFileName.lastIndexOf(".");
+            int dotIndex = content.lastIndexOf(".");
             if (dotIndex != -1) {
-                extension = originalFileName.substring(dotIndex);
-                originalFileName = originalFileName.substring(0, dotIndex);
+                extension = content.substring(dotIndex);
+                content = content.substring(0, dotIndex);
             }
 
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            String input = originalFileName + System.currentTimeMillis();
+            String input = content + System.currentTimeMillis();
             byte[] hash = digest.digest(input.getBytes(StandardCharsets.UTF_8));
 
             StringBuilder hexString = new StringBuilder();

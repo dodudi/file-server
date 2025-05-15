@@ -5,8 +5,8 @@ CREATE TABLE IF NOT EXISTS file_history
     file_path         TEXT         NOT NULL,
     file_type         VARCHAR(50)  NOT NULL,
     file_size         BIGINT       NOT NULL,
-    create_date_time TIMESTAMP(6) DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    update_date_time TIMESTAMP(6) DEFAULT CURRENT_TIMESTAMP NOT NULL
+    create_date_time  TIMESTAMP(6) DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    update_date_time  TIMESTAMP(6) DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS file_info
@@ -15,8 +15,9 @@ CREATE TABLE IF NOT EXISTS file_info
     file_original_name VARCHAR(255) NOT NULL,
     file_hash_name     VARCHAR(255) NOT NULL,
     file_full_path     VARCHAR(255) NOT NULL,
+    file_url           VARCHAR(255) NOT NULL,
     file_size          BIGINT       NOT NULL,
     file_type          VARCHAR(50)  NOT NULL,
-    create_date_time  TIMESTAMP(6) DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    update_date_time  TIMESTAMP(6) DEFAULT CURRENT_TIMESTAMP NOT NULL
+    create_date_time   TIMESTAMP(6) DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    update_date_time   TIMESTAMP(6) DEFAULT CURRENT_TIMESTAMP NOT NULL
 );

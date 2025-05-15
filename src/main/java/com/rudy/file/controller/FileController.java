@@ -3,10 +3,10 @@ package com.rudy.file.controller;
 import com.rudy.file.dto.UploadDto;
 import com.rudy.file.response.FileInfoResponse;
 import com.rudy.file.response.UploadResponse;
-import com.rudy.file.service.history.FileHistoryService;
 import com.rudy.file.service.download.DownloadService;
+import com.rudy.file.service.history.FileHistoryService;
 import com.rudy.file.service.search.SimpleFileSearchService;
-import com.rudy.file.service.upload.UploadService;
+import com.rudy.file.service.upload.SimpleUploadService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
@@ -27,10 +27,9 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/files")
 public class FileController {
-    private final UploadService uploadService;
+    private final SimpleUploadService uploadService;
     private final DownloadService downloadService;
     private final SimpleFileSearchService simpleFileSearchService;
-
     private final FileHistoryService fileHistoryService;
 
     @Operation(summary = "Get Save File Infos", description = "모든 저장된 파일 정보를 조회합니다.")
@@ -50,7 +49,7 @@ public class FileController {
         return ResponseEntity.ok(uploadResponse);
     }
 
-    @Operation(summary = "File Upload", description = "파일을 업로드합니다.")
+    @Operation(summary = "File Uploads", description = "여러 파일을 업로드합니다.")
     @PostMapping(value = "/uploads", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<List<UploadResponse>> upload(@Valid @Parameter @RequestParam List<MultipartFile> files) {
         List<UploadDto> uploads = uploadService.uploads(files);

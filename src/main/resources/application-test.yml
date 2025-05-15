@@ -29,4 +29,4 @@ logging:
     com.rudy.file: ${SPRING_LOG_LEVEL:debug}
 
 url:
-  auth-server: http://localhost:8080/jwt/validate
+  file-storage-server: http://localhost:8081

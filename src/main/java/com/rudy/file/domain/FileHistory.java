@@ -23,7 +23,7 @@ public class FileHistory extends BaseEntity {
 
     public FileHistory(UploadDto request) {
         this.fileName = request.getFileOriginalName();
-        this.filePath = request.getFilePath();
+        this.filePath = request.getFileFullPath();
         this.fileType = request.getFileType();
         this.fileSize = request.getFileSize();
     }

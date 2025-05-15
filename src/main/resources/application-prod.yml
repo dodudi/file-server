@@ -33,4 +33,4 @@ springdoc:
     url: /api/file/v3/api-docs
 
 url:
-  auth-server: ${AUTH_SERVER}
+  file-storage-server: ${FILE_STORAGE_SERVER}

@@ -15,13 +15,15 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class SimpleUploadService implements UploadService {
-    private static final String BASE_PATH = "upload";
+public class BlogUploadService implements UploadService {
+    private static final String BASE_PATH = "uploads/blog";
     private final FileInfoRepository fileInfoRepository;
     private final Hasher hasher;
 
@@ -31,23 +33,27 @@ public class SimpleUploadService implements UploadService {
     @Override
     @Transactional
     public UploadDto upload(MultipartFile file) {
-        // 파일 저장 디렉토리 생성
-        String fileOriginalFilename = getOriginalFilename(file);
-        FileType fileType = FileType.determineFileType(fileOriginalFilename);
-        Path uploadPath = getUploadPath(fileType);
+        // 저장 디렉토리 생성
+        Path uploadPath = getUploadPath();
         createDirectory(uploadPath);
 
-        // 파일 이름 해싱, 파일 저장 이후 저장 경로 + 파일 이름 반환
+        // 파일 정보 추출
+        String fileOriginalFilename = getOriginalFilename(file);
+        FileType fileType = FileType.determineFileType(fileOriginalFilename);
+
+        // 파일 이름 해싱
         String fileHash = hasher.convertHash(fileOriginalFilename);
+
+        // 저장 경로 + 해싱 파일 이름
         String fileFullPath = saveFile(file, uploadPath.resolve(fileHash));
 
         // 서버 주소 + 저장 경로 + 해싱 파일 이름
         String fileUrl = fileStorageServer + "/" + fileFullPath;
 
-        // DB 에 파일 정보 저장
+        // DB 저장
         FileInfo fileInfo = new FileInfo(fileOriginalFilename, fileHash, fileType, fileFullPath, fileUrl, file.getSize());
         fileInfo = fileInfoRepository.save(fileInfo);
-        log.debug("file upload info - {}", fileInfo);
+        log.debug("blog file upload info - {}", fileInfo);
         return new UploadDto(fileInfo);
     }
 
@@ -71,14 +77,15 @@ public class SimpleUploadService implements UploadService {
     }
 
     /**
-     * 파일 저장 경로 생성
+     * 저장 디렉토리 경로 생성
      */
-    private Path getUploadPath(FileType fileType) {
-        return Path.of(BASE_PATH, fileType.getFilePath());
+    private Path getUploadPath() {
+        String dateTime = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
+        return Path.of(BASE_PATH, dateTime);
     }
 
     /**
-     * 파일 저장 후 저장 경로 + 파일 이름 반환
+     * 파일 저장
      */
     private String saveFile(MultipartFile file, Path filePath) {
         try {
@@ -89,9 +96,8 @@ public class SimpleUploadService implements UploadService {
         }
     }
 
-
     /**
-     * 파일 저장 디렉토리 생성
+     * 디렉토리 생성
      */
     private void createDirectory(Path uploadPath) {
         try {

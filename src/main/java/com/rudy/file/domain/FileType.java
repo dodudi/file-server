@@ -28,6 +28,9 @@ public enum FileType {
             .flatMap(fileType -> fileType.extensions.stream().map(ext -> Map.entry(ext, fileType)))
             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
+    /**
+     * 파일 확장자에 따른 타입 반환
+     */
     public static FileType determineFileType(String fileOriginalName) {
         String extension = fileOriginalName.substring(fileOriginalName.lastIndexOf(".") + 1).toLowerCase();
         return EXTENSION_MAP.getOrDefault(extension, FileType.OTHER);

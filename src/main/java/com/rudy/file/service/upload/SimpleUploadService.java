@@ -21,7 +21,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class SimpleUploadService implements UploadService {
-    private static final String BASE_PATH = "upload";
+    private static final String BASE_PATH = "uploads";
     private final FileInfoRepository fileInfoRepository;
     private final Hasher hasher;
 
